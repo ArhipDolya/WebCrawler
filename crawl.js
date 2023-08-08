@@ -1,4 +1,26 @@
 const { parse } = require('url');
+const {JSDOM} = require('jsdom');
+
+function getUrlsFromHtml(HTMLBody, baseURL) {
+    const {window} = new JSDOM(HTMLBody, {url: baseURL});
+    const document = window.document;
+
+    const urls = [];
+
+    const anchorElements = document.querySelectorAll('a');
+
+    anchorElements.forEach(anchor => {
+        const href = anchor.getAttribute('href');
+
+        if (href && href.toLowerCase().startsWith('http')) {
+            urls.push(href);
+        }
+    });
+
+    return urls;
+
+}   
+
 
 function normalizeURL(URLString) {
     try {
@@ -16,4 +38,11 @@ function normalizeURL(URLString) {
 
 module.exports = {
     normalizeURL,
+    getUrlsFromHtml,
 }
+
+
+
+
+
+
