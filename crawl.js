@@ -6,6 +6,19 @@ const axios = require('axios')
 async function crawlingPage(baseURL) {
     try{
         const responce = await fetch(baseURL)
+
+        if (responce.status > 399) {
+            console.log(`Error in fetch with status code: ${responce.status} on page ${baseURL}`)
+            return
+        }
+
+        const contentType = responce.headers.get('content-type')
+
+        if (!contentType.includes('text/html')) {
+            console.log(`It's not html responce, content type: ${contentType} on page: ${baseURL}`)
+            return
+        }
+
         console.log(await responce.text())
     } catch (error) {
         console.log(`There is an error in fetch ${error.message} on page ${baseURL}`)
