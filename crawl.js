@@ -2,7 +2,7 @@ const { parse } = require('url');
 const {JSDOM} = require('jsdom');
 
 function getUrlsFromHtml(HTMLBody, baseURL) {
-    const {window} = new JSDOM(HTMLBody, {url: baseURL});
+    const { window } = new JSDOM(HTMLBody, { url: baseURL });
     const document = window.document;
 
     const urls = [];
@@ -11,15 +11,19 @@ function getUrlsFromHtml(HTMLBody, baseURL) {
 
     anchorElements.forEach(anchor => {
         const href = anchor.getAttribute('href');
-
-        if (href && href.toLowerCase().startsWith('http')) {
-            urls.push(href);
+        
+        if (href) {
+            try {
+                const resolvedURL = new URL(href, baseURL).toString();
+                urls.push(resolvedURL);
+            } catch (error) {
+                
+            }
         }
     });
 
     return urls;
-
-}   
+}
 
 
 function normalizeURL(URLString) {

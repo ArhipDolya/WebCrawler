@@ -29,18 +29,46 @@ test("normalizeURL Capitals", () => {
     expect(output).toEqual(expected)
 })
 
-test("getUrlsFromHtml", () => {
+test("getUrlsFromHtml absolute", () => {
     const htmlContent = `
     <html>
         <body>
-            <a href="https://baseurl.com">Example</a>
-            <a href="/path">Relative Path</a>
-            <a href="mailto:info@example.com">Email</a>
+            <a href="https://baseurl.com/path/">
+        </body>
+    </html>
+    `;
+    const baseURL = 'https://baseurl.com/path/'
+    const output = getUrlsFromHtml(htmlContent, baseURL);
+    const expected = ['https://baseurl.com/path/']
+    expect(output).toEqual(expected)
+})
+
+test("getUrlsFromHtml relative", () => {
+    const htmlContent = `
+    <html>
+        <body>
+            <a href="/path/">Example</a>
         </body>
     </html>
     `;
     const baseURL = 'https://baseurl.com'
     const output = getUrlsFromHtml(htmlContent, baseURL);
-    const expected = ['https://baseurl.com']
+    const expected = ['https://baseurl.com/path/']
     expect(output).toEqual(expected)
 })
+
+test("getUrlsFromHtml multiple", () => {
+    const htmlContent = `
+    <html>
+        <body>
+            <a href="https://baseurl.com/path1/">
+            <a href="/path2/">Example</a>
+        </body>
+    </html>
+    `;
+    const baseURL = 'https://baseurl.com'
+    const output = getUrlsFromHtml(htmlContent, baseURL);
+    const expected = ['https://baseurl.com/path1/', 'https://baseurl.com/path2/']
+    expect(output).toEqual(expected)
+})
+
