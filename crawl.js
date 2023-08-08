@@ -1,5 +1,19 @@
 const { parse } = require('url');
 const {JSDOM} = require('jsdom');
+const axios = require('axios')
+
+
+async function crawlingPage(baseURL) {
+    try{
+        const responce = await fetch(baseURL)
+        console.log(await responce.text())
+    } catch (error) {
+        console.log(`There is an error in fetch ${error.message} on page ${baseURL}`)
+    }
+    
+
+}
+
 
 function getUrlsFromHtml(HTMLBody, baseURL) {
     const { window } = new JSDOM(HTMLBody, { url: baseURL });
@@ -43,6 +57,7 @@ function normalizeURL(URLString) {
 module.exports = {
     normalizeURL,
     getUrlsFromHtml,
+    crawlingPage,
 }
 
 
