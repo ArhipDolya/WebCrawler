@@ -1,13 +1,27 @@
 const { parse } = require('url');
 const {JSDOM} = require('jsdom');
 const axios = require('axios')
+const robotsParser = require('robots-parser')
 
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 async function crawlingPages(baseURL, currentURLs, pages) {
     const promises = currentURLs.map(async currentURL => {
 
         const baseURLObj = new URL(baseURL);
         const currentURLObj = new URL(currentURL);
+
+        const robotsTxtParser = new robotsParser(`${baseURLObj.protocol}//${baseURLObj.hostname}/robots.txt`)
+
+        if (!robotsTxtParser.isAllowed(currentURL, '*')) {
+            console.log(`Crawling not allowed for ${currentURL}`);
+            return pages;
+        }
+
+        await delay(1000)
 
         if (baseURLObj.hostname !== currentURLObj.hostname) {
             return pages;
@@ -46,7 +60,7 @@ async function crawlingPages(baseURL, currentURLs, pages) {
             for (const url of URLs) {
                 pages = await crawlingPages(baseURL, [url], pages);
             }
-            
+
         } catch (error) {
             console.log(`There is an error in fetch ${error.message} on page ${currentURL}`);
         }
