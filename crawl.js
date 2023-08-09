@@ -11,8 +11,15 @@ function delay(ms) {
 async function crawlingPages(baseURL, currentURLs, pages) {
     const promises = currentURLs.map(async currentURL => {
 
+        const userAgentList = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+            ];
+
         const baseURLObj = new URL(baseURL);
         const currentURLObj = new URL(currentURL);
+
+        const randomUserAgent = userAgentList[Math.floor(Math.random() * userAgentList.length)]
 
         const robotsTxtParser = new robotsParser(`${baseURLObj.protocol}//${baseURLObj.hostname}/robots.txt`)
 
@@ -40,6 +47,12 @@ async function crawlingPages(baseURL, currentURLs, pages) {
 
         try {
             const response = await fetch(currentURL);
+
+            const userAgentResponce = await axios.get(currentURL, {
+                headers: {
+                    "User-Agent": randomUserAgent,
+                },
+            })
 
             if (response.status > 399) {
                 console.log(`Error in fetch with status code: ${response.status} on page ${currentURL}`);
