@@ -4,12 +4,16 @@ const axios = require('axios')
 const robotsParser = require('robots-parser')
 
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
+const depthLimit = 5
 
-async function crawlingPages(baseURL, currentURLs, pages) {
+
+async function crawlingPages(baseURL, currentURLs, pages, currentDepth) {
     const promises = currentURLs.map(async currentURL => {
+
+        if (currentDepth >= depthLimit) {
+            console.log(`Reached depth limit at ${currentURL}`)
+            return pages;
+        }
 
         const userAgentList = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -27,8 +31,6 @@ async function crawlingPages(baseURL, currentURLs, pages) {
             console.log(`Crawling not allowed for ${currentURL}`);
             return pages;
         }
-
-        await delay(1000)
 
         if (baseURLObj.hostname !== currentURLObj.hostname) {
             return pages;
@@ -71,7 +73,7 @@ async function crawlingPages(baseURL, currentURLs, pages) {
             const URLs = getUrlsFromHtml(htmlBody, baseURL);
 
             for (const url of URLs) {
-                pages = await crawlingPages(baseURL, [url], pages);
+                pages = await crawlingPages(baseURL, [url], pages, currentDepth + 1);
             }
 
         } catch (error) {

@@ -9,7 +9,7 @@ async function main() {
     const baseURL = process.argv[2]
 
     console.log(`Start crawling ${baseURL}`)
-    const pages = await crawlingPages(baseURL, [baseURL], {})
+    const pages = await crawlingPages(baseURL, [baseURL], {}, 0)
 
     for (const [url, count] of Object.entries(pages)) { 
         console.log(`${url}: ${count} occurrences`);
