@@ -11,10 +11,8 @@ async function main() {
     console.log(`Start crawling ${baseURL}`)
     const pages = await crawlingPages(baseURL, [baseURL], {}, 0)
 
-    for (const [url, count] of Object.entries(pages)) { 
-        console.log(`${url}: ${count} occurrences`);
-    }
+    console.log('Crawling Results:');
+    console.table(Object.entries(pages).map(([url, count]) => ({ URL: url, Occurrences: count })));
 }
 
-
-main()
+main();
